@@ -51,7 +51,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
     // pre-fill maze array here
 
-    File name = new File("maze1.txt");
+    File name = new File("maze2.txt");
     int r = 0;
     try {
       BufferedReader input = new BufferedReader(new FileReader(name));
