@@ -1,18 +1,17 @@
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   JFrame frame;
   // declare an array to store the maze - Store Wall(s) in the array
+  ArrayList<Wall> walls = new ArrayList<Wall>();
   int x = 100, y = 100;
 
   public MazeProgram() {
-    // setBoard();
+    setBoard();
     frame = new JFrame();
     frame.add(this);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,16 +23,17 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.setColor(Color.BLACK); // this will set the background color
-    g.fillRect(0, 0, 1000, 800); // since the screen size is 1000x800
-                                 // it will fill the whole visible part
-                                 // of the screen with a black rectangle
+    Graphics2D g2 = (Graphics2D) g; // 2d version has ellipses
+    g2.setColor(Color.BLACK);
+    g2.fillRect(0, 0, 1000, 800);
+    g2.setColor(Color.WHITE);
 
     // drawBoard here!
+    for (Wall w : walls) {
+      g2.fill(w.getRectangle());
+    }
 
-    g.setColor(Color.WHITE);
-    g.drawRect(x + 500, y, 100, 100); // x & y would be used to located your
-    // playable character
+    // x & y would be used to located your playable character
     // values would be set below
     // call the x & y values from your Explorer class
     // explorer.getX() and explorer.getY()
@@ -47,19 +47,20 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void setBoard() {
-    // choose your maze design
-
-    // pre-fill maze array here
-
-    File name = new File("maze2.txt");
+    File name = new File("maze3.txt");
     int r = 0;
     try {
       BufferedReader input = new BufferedReader(new FileReader(name));
       String text;
       while ((text = input.readLine()) != null) {
         System.out.println(text);
-        // your code goes in here to chop up the maze design
         // fill maze array with actual maze stored in text file
+        for (int c = 0; c < text.length(); c++) {
+          if (text.charAt(c) == 35) {
+            walls.add(new Wall(new Location(c, r), 30, 30));
+          }
+        }
+        r++;
       }
     } catch (IOException io) {
       System.err.println("File error");
@@ -81,7 +82,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     if (e.getKeyCode() == 37)
       x -= 10;
     repaint();
-
   }
 
   public void keyReleased(KeyEvent e) {

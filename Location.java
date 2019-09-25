@@ -1,26 +1,26 @@
 public class Location {
 
-  private int x;
-  private int y;
+  private int col;
+  private int row;
 
-  public Location(int x, int y) {
-    this.x = x;
-    this.y = y;
+  public Location(int c, int r) {
+    this.col = c;
+    this.row = r;
   }
 
-  public int getX() {
-    return x;
+  public int getCol() {
+    return col;
   }
 
-  public int getY() {
-    return y;
+  public int getRow() {
+    return row;
   }
 
-  public void setX(int newX) {
-    x = newX;
+  public void setCol(int c) {
+    col = c;
   }
 
-  public void setY(int newY) {
-    y = newY;
+  public void setRow(int r) {
+    row = r;
   }
 }
