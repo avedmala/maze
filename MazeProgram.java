@@ -2,12 +2,10 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   JFrame frame;
-  // declare an array to store the maze - Store Wall(s) in the array
-  ArrayList<Wall> walls = new ArrayList<Wall>();
+  Wall[][] walls = new Wall[15][30];
   int x = 100, y = 100;
   Explorer explorer = new Explorer(new Location(0, 0));
   boolean up = false;
@@ -32,8 +30,13 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     g.fillRect(0, 0, 1000, 800);
     g.setColor(Color.WHITE);
 
-    for (Wall w : walls) {
-      g.fillRect(w.getCol() * w.getWidth(), w.getRow() * w.getHeight(), w.getWidth(), w.getHeight());
+    for (int i = 0; i < walls.length; i++) {
+      for (int j = 0; j < walls[i].length; j++) {
+        Wall w = walls[i][j];
+        if (w != null) {
+          g.fillRect(w.getCol() * w.getWidth(), w.getRow() * w.getHeight(), w.getWidth(), w.getHeight());
+        }
+      }
     }
 
     // x & y would be used to located your playable character
@@ -42,7 +45,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     // explorer.getX() and explorer.getY()
     g.setColor(Color.RED);
     g.fillRect(explorer.getCol() * 30, explorer.getRow() * 30, 30, 30);
-    System.out.println(explorer.getCol() + " " + explorer.getRow());
 
     // other commands that might come in handy
     // g.setFont("Times New Roman",Font.PLAIN,18);
@@ -59,12 +61,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       String text;
       int r = 0;
       while ((text = input.readLine()) != null) {
-        // System.out.println(text);
         for (int c = 0; c < text.length(); c++) {
           if (text.charAt(c) == 35) {
-            walls.add(new Wall(new Location(c, r), 30, 30));
+            walls[r][c] = new Wall(new Location(r, c), 30, 30);
           } else if (text.charAt(c) == 83) {
-            explorer.setLocation(new Location(c, r));
+            explorer.setLocation(new Location(r, c));
           }
         }
         r++;

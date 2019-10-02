@@ -3,9 +3,9 @@ public class Location {
   private int col;
   private int row;
 
-  public Location(int c, int r) {
-    this.col = c;
+  public Location(int r, int c) {
     this.row = r;
+    this.col = c;
   }
 
   public int getCol() {

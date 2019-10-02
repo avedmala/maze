@@ -24,22 +24,22 @@ public class Explorer {
 
   public boolean canMove(String dir, Maze maze) {
     if (dir.equals("u")) {
-      Location checkLoc = new Location(location.getCol(), location.getRow() - 1);
+      Location checkLoc = new Location(location.getRow() - 1, location.getCol());
       if (maze.getLocations().contains(checkLoc))
         return false;
     }
     if (dir.equals("d")) {
-      Location checkLoc = new Location(location.getCol(), location.getRow() + 1);
+      Location checkLoc = new Location(location.getRow() + 1, location.getCol());
       if (maze.getLocations().contains(checkLoc))
         return false;
     }
     if (dir.equals("l")) {
-      Location checkLoc = new Location(location.getCol() - 1, location.getRow());
+      Location checkLoc = new Location(location.getRow(), location.getCol() - 1);
       if (maze.getLocations().contains(checkLoc))
         return false;
     }
     if (dir.equals("r")) {
-      Location checkLoc = new Location(location.getCol() + 1, location.getRow());
+      Location checkLoc = new Location(location.getRow(), location.getCol() + 1);
       if (maze.getLocations().contains(checkLoc))
         return false;
     }
@@ -49,16 +49,16 @@ public class Explorer {
   public void move(String dir, Maze maze) {
     if (canMove(dir, maze)) {
       if (dir.equals("u")) {
-        location = new Location(location.getCol(), location.getRow() - 1);
+        location = new Location(location.getRow() - 1, location.getCol());
       }
       if (dir.equals("d")) {
-        location = new Location(location.getCol(), location.getRow() + 1);
+        location = new Location(location.getRow() + 1, location.getCol());
       }
       if (dir.equals("l")) {
-        location = new Location(location.getCol() - 1, location.getRow());
+        location = new Location(location.getRow(), location.getCol() - 1);
       }
       if (dir.equals("r")) {
-        location = new Location(location.getCol() + 1, location.getRow());
+        location = new Location(location.getRow(), location.getCol() + 1);
       }
     }
   }
