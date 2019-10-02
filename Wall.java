@@ -1,5 +1,3 @@
-import java.awt.Rectangle;
-
 public class Wall {
 
   private Location location;
@@ -16,17 +14,20 @@ public class Wall {
     return location;
   }
 
+  public int getCol() {
+    return location.getCol();
+  }
+
+  public int getRow() {
+    return location.getRow();
+  }
+
   public int getWidth() {
     return width;
   }
 
   public int getHeight() {
     return height;
-  }
-
-  public Rectangle getRectangle() {
-    Rectangle rect = new Rectangle((location.getCol() * width) + 50, (location.getRow() * height) + 100, width, height);
-    return rect;
   }
 
   public void setSize(int w, int h) {
