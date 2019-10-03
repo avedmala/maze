@@ -33,7 +33,11 @@ public class Explorer {
     if (dir.equals("r"))
       checkLoc = new Location(location.getRow(), location.getCol() + 1);
 
-    if (!maze.contains(checkLoc))
+    if (checkLoc.equals(maze.getFinish())) {
+      location = checkLoc;
+      System.out.println("It only took you " + maze.getMoves() + " moves to get out...");
+      System.exit(0);
+    } else if (!maze.contains(checkLoc))
       location = checkLoc;
   }
 

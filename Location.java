@@ -8,6 +8,12 @@ public class Location {
     this.col = c;
   }
 
+  public boolean equals(Location location) {
+    if (location.getCol() == col && location.getRow() == row)
+      return true;
+    return false;
+  }
+
   public int getCol() {
     return col;
   }

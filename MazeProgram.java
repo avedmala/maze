@@ -14,10 +14,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   Wall[][] walls = new Wall[15][30];
   int x = 100, y = 100;
   Explorer explorer = new Explorer(new Location(0, 0));
-  boolean up = false;
-  boolean left = false;
-  boolean right = false;
-  boolean down = false;
+  Location fLocation = new Location(0, 0);
 
   public MazeProgram() {
     setBoard();
@@ -67,6 +64,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
             walls[r][c] = new Wall(new Location(r, c), 30, 30);
           } else if (text.charAt(c) == 83) {
             explorer.setLocation(new Location(r, c));
+          } else if (text.charAt(c) == 69) {
+            fLocation = new Location(r, c);
           }
         }
         r++;
@@ -82,7 +81,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
           locations.add(walls[i][j].getLocation());
       }
     }
-    maze = new Maze(locations);
+    maze = new Maze(locations, fLocation, 0);
 
     // setWalls();
   }
@@ -113,6 +112,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       explorer.move("r", maze);
     }
     repaint();
+    maze.addMove();
   }
 
   public void keyTyped(KeyEvent e) {
