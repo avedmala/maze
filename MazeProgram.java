@@ -2,9 +2,15 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
   JFrame frame;
+  Maze maze;
   Wall[][] walls = new Wall[15][30];
   int x = 100, y = 100;
   Explorer explorer = new Explorer(new Location(0, 0));
@@ -33,16 +39,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     for (int i = 0; i < walls.length; i++) {
       for (int j = 0; j < walls[i].length; j++) {
         Wall w = walls[i][j];
-        if (w != null) {
+        if (w != null)
           g.fillRect(w.getCol() * w.getWidth(), w.getRow() * w.getHeight(), w.getWidth(), w.getHeight());
-        }
       }
     }
 
-    // x & y would be used to located your playable character
-    // values would be set below
-    // call the x & y values from your Explorer class
-    // explorer.getX() and explorer.getY()
     g.setColor(Color.RED);
     g.fillRect(explorer.getCol() * 30, explorer.getRow() * 30, 30, 30);
 
@@ -74,6 +75,15 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       System.err.println("File error");
     }
 
+    ArrayList<Location> locations = new ArrayList<Location>();
+    for (int i = 0; i < walls.length; i++) {
+      for (int j = 0; j < walls[i].length; j++) {
+        if (walls[i][j] != null)
+          locations.add(walls[i][j].getLocation());
+      }
+    }
+    maze = new Maze(locations);
+
     // setWalls();
   }
 
@@ -86,56 +96,24 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void keyReleased(KeyEvent e) {
-    if (e.getKeyCode() == 87) {
-      up = false;
-    }
-    if (e.getKeyCode() == 83) {
-      down = false;
-    }
-    if (e.getKeyCode() == 65) {
-      left = false;
-    }
-    if (e.getKeyCode() == 68) {
-      right = false;
-    }
+
   }
 
   public void keyPressed(KeyEvent e) {
     if (e.getKeyCode() == 87) {
-      up = true;
+      explorer.move("u", maze);
     }
     if (e.getKeyCode() == 83) {
-      down = true;
+      explorer.move("d", maze);
     }
     if (e.getKeyCode() == 65) {
-      left = true;
+      explorer.move("l", maze);
     }
     if (e.getKeyCode() == 68) {
-      right = true;
+      explorer.move("r", maze);
     }
+    repaint();
   }
-
-  // public void run() {
-  // while (gameOn) {
-  // if (up) {
-  // explorer.move("u", walls);
-  // }
-  // if (down) {
-  // explorer.move("d", walls);
-  // }
-  // if (left) {
-  // explorer.move("l", walls);
-  // }
-  // if (right) {
-  // explorer.move("r", walls);
-  // }
-  // try {
-  // thread.sleep(5);
-  // repaint();
-  // } catch (InterruptedException e) {
-  // }
-  // }
-  // }
 
   public void keyTyped(KeyEvent e) {
   }

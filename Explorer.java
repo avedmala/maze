@@ -22,45 +22,19 @@ public class Explorer {
     location = newLocation;
   }
 
-  public boolean canMove(String dir, Maze maze) {
-    if (dir.equals("u")) {
-      Location checkLoc = new Location(location.getRow() - 1, location.getCol());
-      if (maze.getLocations().contains(checkLoc))
-        return false;
-    }
-    if (dir.equals("d")) {
-      Location checkLoc = new Location(location.getRow() + 1, location.getCol());
-      if (maze.getLocations().contains(checkLoc))
-        return false;
-    }
-    if (dir.equals("l")) {
-      Location checkLoc = new Location(location.getRow(), location.getCol() - 1);
-      if (maze.getLocations().contains(checkLoc))
-        return false;
-    }
-    if (dir.equals("r")) {
-      Location checkLoc = new Location(location.getRow(), location.getCol() + 1);
-      if (maze.getLocations().contains(checkLoc))
-        return false;
-    }
-    return true;
-  }
-
   public void move(String dir, Maze maze) {
-    if (canMove(dir, maze)) {
-      if (dir.equals("u")) {
-        location = new Location(location.getRow() - 1, location.getCol());
-      }
-      if (dir.equals("d")) {
-        location = new Location(location.getRow() + 1, location.getCol());
-      }
-      if (dir.equals("l")) {
-        location = new Location(location.getRow(), location.getCol() - 1);
-      }
-      if (dir.equals("r")) {
-        location = new Location(location.getRow(), location.getCol() + 1);
-      }
-    }
+    Location checkLoc = new Location(0, 0);
+    if (dir.equals("u"))
+      checkLoc = new Location(location.getRow() - 1, location.getCol());
+    if (dir.equals("d"))
+      checkLoc = new Location(location.getRow() + 1, location.getCol());
+    if (dir.equals("l"))
+      checkLoc = new Location(location.getRow(), location.getCol() - 1);
+    if (dir.equals("r"))
+      checkLoc = new Location(location.getRow(), location.getCol() + 1);
+
+    if (!maze.contains(checkLoc))
+      location = checkLoc;
   }
 
 }

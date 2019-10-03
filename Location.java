@@ -16,6 +16,10 @@ public class Location {
     return row;
   }
 
+  public String toString() {
+    return col + " " + row;
+  }
+
   public void setCol(int c) {
     col = c;
   }
