@@ -40,6 +40,7 @@ public class Explorer {
     Location checkLoc = new Location(0, 0);
     int rot = rotation % 360;
 
+    // checks the orientation of the explorer and moves in that direction
     if (rot == 0)
       checkLoc = new Location(location.getRow() - 1, location.getCol());
     if (rot == 90 || rot == -270)
@@ -49,6 +50,7 @@ public class Explorer {
     if (rot == 270 || rot == -90)
       checkLoc = new Location(location.getRow(), location.getCol() - 1);
 
+    // checks if the space explorer is trying to take is a wall
     if (!maze.contains(checkLoc)) {
       maze.addMove();
       location = checkLoc;

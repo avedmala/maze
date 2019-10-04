@@ -5,14 +5,10 @@ import java.io.*;
 import java.util.*;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
-  /**
-   *
-   */
   private static final long serialVersionUID = 1L;
   JFrame frame;
   Maze maze;
-  Wall[][] walls = new Wall[999][999];
-  int x = 100, y = 100;
+  Wall[][] walls = new Wall[999][999]; // don't have to guess the size of the maze
   Explorer explorer = new Explorer(new Location(0, 0), 90);
   Location fLocation = new Location(0, 0);
 
@@ -28,12 +24,13 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void paintComponent(Graphics g) {
-    if (!explorer.getLocation().equals(fLocation)) {
+    if (!explorer.getLocation().equals(fLocation)) { // checks if game is over
       super.paintComponent(g);
       g.setColor(Color.BLACK);
       g.fillRect(0, 0, 1000, 800);
       g.setColor(Color.WHITE);
 
+      // loops through the 2d array and draws each wall
       for (int i = 0; i < walls.length; i++) {
         for (int j = 0; j < walls[i].length; j++) {
           Wall w = walls[i][j];
@@ -42,10 +39,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         }
       }
 
+      // draws explorer
       g.setColor(Color.RED);
       g.fillRect(explorer.getCol() * 30, explorer.getRow() * 30, 30, 30);
 
-    } else {
+    } else { // game over screen
       super.paintComponent(g);
       g.setColor(Color.BLACK);
       g.fillRect(0, 0, 1000, 800);
@@ -64,20 +62,22 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       int r = 0;
       while ((text = input.readLine()) != null) {
         for (int c = 0; c < text.length(); c++) {
-          if (text.charAt(c) == 35) {
+          if (text.charAt(c) == 35) { // normal wall
             walls[r][c] = new Wall(new Location(r, c), 30, 30);
-          } else if (text.charAt(c) == 83) {
+          } else if (text.charAt(c) == 83) { // explorer start position
             explorer.setLocation(new Location(r, c));
-          } else if (text.charAt(c) == 69) {
+          } else if (text.charAt(c) == 69) { // end of maze
             fLocation = new Location(r, c);
           }
         }
         r++;
       }
+      input.close();
     } catch (IOException io) {
       System.err.println("File error");
     }
 
+    // creates maze object to store the walls in
     ArrayList<Location> locations = new ArrayList<Location>();
     for (int i = 0; i < walls.length; i++) {
       for (int j = 0; j < walls[i].length; j++) {
@@ -104,11 +104,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
   public void keyPressed(KeyEvent e) {
     if (!explorer.getLocation().equals(fLocation)) {
-      if (e.getKeyCode() == 87) // w
+      if (e.getKeyCode() == 87) // moves explorer in direction its facing
         explorer.move(maze);
-      if (e.getKeyCode() == 65) // a
+      if (e.getKeyCode() == 65) // turns 90 degrees counterclockwise
         explorer.turn(-90);
-      if (e.getKeyCode() == 68) // d
+      if (e.getKeyCode() == 68) // turns 90 degrees clockwise
         explorer.turn(90);
       repaint();
     }
@@ -133,6 +133,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public static void main(String args[]) {
-    MazeProgram app = new MazeProgram();
+    new MazeProgram();
   }
 }
