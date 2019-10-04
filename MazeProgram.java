@@ -11,9 +11,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   private static final long serialVersionUID = 1L;
   JFrame frame;
   Maze maze;
-  Wall[][] walls = new Wall[15][30];
+  Wall[][] walls = new Wall[999][999];
   int x = 100, y = 100;
-  Explorer explorer = new Explorer(new Location(0, 0));
+  Explorer explorer = new Explorer(new Location(0, 0), 90);
   Location fLocation = new Location(0, 0);
 
   public MazeProgram() {
@@ -53,7 +53,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void setBoard() {
-    File name = new File("maze3.txt");
+    File name = new File("m1.txt");
     try {
       BufferedReader input = new BufferedReader(new FileReader(name));
       String text;
@@ -99,17 +99,14 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void keyPressed(KeyEvent e) {
-    if (e.getKeyCode() == 87) {
-      explorer.move("u", maze);
+    if (e.getKeyCode() == 87) { // w
+      explorer.move(maze);
     }
-    if (e.getKeyCode() == 83) {
-      explorer.move("d", maze);
+    if (e.getKeyCode() == 65) { // a
+      explorer.turn(-90);
     }
-    if (e.getKeyCode() == 65) {
-      explorer.move("l", maze);
-    }
-    if (e.getKeyCode() == 68) {
-      explorer.move("r", maze);
+    if (e.getKeyCode() == 68) { // d
+      explorer.turn(90);
     }
     repaint();
     maze.addMove();
