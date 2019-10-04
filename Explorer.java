@@ -49,12 +49,10 @@ public class Explorer {
     if (rot == 270 || rot == -90)
       checkLoc = new Location(location.getRow(), location.getCol() - 1);
 
-    if (checkLoc.equals(maze.getFinish())) {
+    if (!maze.contains(checkLoc)) {
+      maze.addMove();
       location = checkLoc;
-      System.out.println("It only took you " + maze.getMoves() + " moves to get out...");
-      System.exit(0);
-    } else if (!maze.contains(checkLoc))
-      location = checkLoc;
+    }
   }
 
 }

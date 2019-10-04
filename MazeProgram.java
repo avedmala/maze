@@ -28,28 +28,32 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    g.setColor(Color.BLACK);
-    g.fillRect(0, 0, 1000, 800);
-    g.setColor(Color.WHITE);
+    if (!explorer.getLocation().equals(fLocation)) {
+      super.paintComponent(g);
+      g.setColor(Color.BLACK);
+      g.fillRect(0, 0, 1000, 800);
+      g.setColor(Color.WHITE);
 
-    for (int i = 0; i < walls.length; i++) {
-      for (int j = 0; j < walls[i].length; j++) {
-        Wall w = walls[i][j];
-        if (w != null)
-          g.fillRect(w.getCol() * w.getWidth(), w.getRow() * w.getHeight(), w.getWidth(), w.getHeight());
+      for (int i = 0; i < walls.length; i++) {
+        for (int j = 0; j < walls[i].length; j++) {
+          Wall w = walls[i][j];
+          if (w != null)
+            g.fillRect(w.getCol() * w.getWidth(), w.getRow() * w.getHeight(), w.getWidth(), w.getHeight());
+        }
       }
+
+      g.setColor(Color.RED);
+      g.fillRect(explorer.getCol() * 30, explorer.getRow() * 30, 30, 30);
+
+    } else {
+      super.paintComponent(g);
+      g.setColor(Color.BLACK);
+      g.fillRect(0, 0, 1000, 800);
+      g.setColor(Color.WHITE);
+
+      g.setFont(new Font("Arial", Font.BOLD, 36));
+      g.drawString("It only took you " + maze.getMoves() + " moves to escape...", 50, 100);
     }
-
-    g.setColor(Color.RED);
-    g.fillRect(explorer.getCol() * 30, explorer.getRow() * 30, 30, 30);
-
-    // other commands that might come in handy
-    // g.setFont("Times New Roman",Font.PLAIN,18);
-    // you can also use Font.BOLD, Font.ITALIC, Font.BOLD|Font.Italic
-    // g.drawOval(x,y,10,10);
-    // g.fillRect(x,y,100,100);
-    // g.fillOval(x,y,10,10);
   }
 
   public void setBoard() {
@@ -99,17 +103,15 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void keyPressed(KeyEvent e) {
-    if (e.getKeyCode() == 87) { // w
-      explorer.move(maze);
+    if (!explorer.getLocation().equals(fLocation)) {
+      if (e.getKeyCode() == 87) // w
+        explorer.move(maze);
+      if (e.getKeyCode() == 65) // a
+        explorer.turn(-90);
+      if (e.getKeyCode() == 68) // d
+        explorer.turn(90);
+      repaint();
     }
-    if (e.getKeyCode() == 65) { // a
-      explorer.turn(-90);
-    }
-    if (e.getKeyCode() == 68) { // d
-      explorer.turn(90);
-    }
-    repaint();
-    maze.addMove();
   }
 
   public void keyTyped(KeyEvent e) {
