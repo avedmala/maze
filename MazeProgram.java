@@ -12,9 +12,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   ArrayList<Wall> wallList = new ArrayList<Wall>();
   Explorer explorer = new Explorer(new Location(0, 0), 90);
   Location fLocation = new Location(0, 0);
-  int scale = 25; // scale of maze blocks and explorer
+  int scale = 15; // scale of maze blocks and explorer
 
-  int xMax = 1200; // horizontal window res
+  int xMax = 800; // horizontal window res
   int yMax = 800; // vertical window res
   int iterX = xMax / 10; // size of iterations of each level for X
   int iterY = yMax / 10; // size of iterations of each level for Y
@@ -25,39 +25,15 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     frame = new JFrame();
     frame.add(this);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(xMax, yMax);
+    frame.setSize(xMax + 600, yMax);
     frame.setVisible(true);
     frame.addKeyListener(this);
     // this.addMouseListener(this); //in case you need mouse clicking
   }
 
   public void paintComponent(Graphics g) {
-    if (false) { // 2d stuff
+    if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
       super.paintComponent(g);
-      g.setColor(Color.BLACK);
-      g.fillRect(0, 0, xMax, yMax);
-      g.setColor(Color.WHITE);
-
-      // loops through the 2d array and draws each wall
-      for (int i = 0; i < walls.length; i++) {
-        for (int j = 0; j < walls[i].length; j++) {
-          Wall w = walls[i][j];
-          if (w != null)
-            g.fillRect(w.getCol() * w.getWidth(), w.getRow() * w.getHeight(), w.getWidth(), w.getHeight());
-        }
-      }
-
-      // draws explorer
-      g.setColor(Color.RED);
-      g.fillOval(explorer.getCol() * scale, explorer.getRow() * scale, scale, scale);
-
-      // draw finish
-      g.setColor(Color.CYAN);
-      g.fillRect(fLocation.getCol() * scale, fLocation.getRow() * scale, scale, scale);
-
-    } else if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
-      super.paintComponent(g);
-
       for (int i = 0; i < wallList.size(); i++) {
         Polygon p = new Polygon();
         Wall w = wallList.get(i);
@@ -65,20 +41,43 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
+        // draws borders of the trapezoids
         g.setColor(Color.BLUE);
         g.drawPolygon(p);
 
+        // makes each level a darker gray
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
       }
+
+      // 2d
+      g.setColor(Color.DARK_GRAY);
+
+      // loops through the 2d array and draws each wall
+      for (int i = 0; i < walls.length; i++) {
+        for (int j = 0; j < walls[i].length; j++) {
+          Wall w = walls[i][j];
+          if (w != null)
+            g.fillRect(w.getCol() * w.getWidth() + 900, w.getRow() * w.getHeight() + 250, w.getWidth(), w.getHeight());
+        }
+      }
+
+      // draws explorer
+      g.setColor(Color.RED);
+      g.fillOval(explorer.getCol() * scale + 900, explorer.getRow() * scale + 250, scale, scale);
+
+      // draw finish
+      g.setColor(Color.CYAN);
+      g.fillRect(fLocation.getCol() * scale + 900, fLocation.getRow() * scale + 250, scale, scale);
+
     } else { // game over screen
       super.paintComponent(g);
+      g.setColor(Color.LIGHT_GRAY);
+      g.fillRect(0, 0, xMax + 600, yMax);
       g.setColor(Color.BLACK);
-      g.fillRect(0, 0, xMax, yMax);
-      g.setColor(Color.WHITE);
 
       g.setFont(new Font("Arial", Font.BOLD, 36));
-      g.drawString("It only took you " + maze.getMoves() + " moves to escape...", 750, 400);
+      g.drawString("It only took you " + maze.getMoves() + " moves to escape...", 350, 400);
     }
   }
 
@@ -137,9 +136,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
     }
 
-    for (int i = 0; i < xList.size(); i++) {
+    for (int i = 0; i < xList.size(); i++)
       wallList.add(new Wall(xList.get(i), yList.get(i)));
-    }
 
   }
 
