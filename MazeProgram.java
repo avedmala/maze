@@ -14,9 +14,10 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   Location fLocation = new Location(0, 0);
   int scale = 25; // scale of maze blocks and explorer
 
-  int xMax = 800; // horizontal res
-  int yMax = 800; // vertical res
-  int iter = 80; // size of iterations of each level
+  int xMax = 1200; // horizontal window res
+  int yMax = 800; // vertical window res
+  int iterX = xMax / 10; // size of iterations of each level for X
+  int iterY = yMax / 10; // size of iterations of each level for Y
   int lvl = 4; // number of levels
 
   public MazeProgram() {
@@ -64,7 +65,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        g.setColor(Color.RED);
+        g.setColor(Color.BLUE);
         g.drawPolygon(p);
 
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
@@ -123,17 +124,17 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
     for (int i = 0; i < lvl; i++) {
       // ceiling
-      xList.add(new int[] { i * iter, xMax - i * iter, xMax - iter - i * iter, iter + i * iter });
-      yList.add(new int[] { i * iter, i * iter, iter + i * iter, iter + i * iter });
+      xList.add(new int[] { i * iterX, xMax - i * iterX, xMax - iterX - i * iterX, iterX + i * iterX });
+      yList.add(new int[] { i * iterY, i * iterY, iterY + i * iterY, iterY + i * iterY });
       // floor
-      xList.add(new int[] { i * iter, xMax - i * iter, xMax - iter - i * iter, iter + i * iter });
-      yList.add(new int[] { yMax - i * iter, yMax - i * iter, yMax - iter - i * iter, yMax - iter - i * iter });
+      xList.add(new int[] { i * iterX, xMax - i * iterX, xMax - iterX - i * iterX, iterX + i * iterX });
+      yList.add(new int[] { yMax - i * iterY, yMax - i * iterY, yMax - iterY - i * iterY, yMax - iterY - i * iterY });
       // right
-      xList.add(new int[] { xMax - i * iter, xMax - iter - i * iter, xMax - iter - i * iter, xMax - i * iter });
-      yList.add(new int[] { i * iter, i * iter + iter, yMax - iter - i * iter, yMax - i * iter });
+      xList.add(new int[] { xMax - i * iterX, xMax - iterX - i * iterX, xMax - iterX - i * iterX, xMax - i * iterX });
+      yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
       // left
-      xList.add(new int[] { i * iter, iter + i * iter, iter + i * iter, i * iter });
-      yList.add(new int[] { i * iter, i * iter + iter, yMax - iter - i * iter, yMax - i * iter });
+      xList.add(new int[] { i * iterX, iterX + i * iterX, iterX + i * iterX, i * iterX });
+      yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
     }
 
     for (int i = 0; i < xList.size(); i++) {
