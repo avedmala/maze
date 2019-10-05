@@ -1,6 +1,8 @@
 public class Wall {
 
   private Location location;
+  private int[] x;
+  private int[] y;
   private int height;
   private int width;
 
@@ -8,6 +10,19 @@ public class Wall {
     this.location = location;
     this.height = height;
     this.width = width;
+  }
+
+  public Wall(int[] x, int[] y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  public int[] getX() {
+    return x;
+  }
+
+  public int[] getY() {
+    return y;
   }
 
   public Location getLocation() {

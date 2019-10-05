@@ -9,8 +9,10 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   JFrame frame;
   Maze maze;
   Wall[][] walls = new Wall[999][999]; // don't have to guess the size of the maze
+  ArrayList<Wall> wallList = new ArrayList<Wall>();
   Explorer explorer = new Explorer(new Location(0, 0), 90);
   Location fLocation = new Location(0, 0);
+  int scale = 25;
 
   public MazeProgram() {
     setBoard();
@@ -24,7 +26,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void paintComponent(Graphics g) {
-    if (!explorer.getLocation().equals(fLocation)) { // checks if game is over
+    if (false) { // 2d stuff
       super.paintComponent(g);
       g.setColor(Color.BLACK);
       g.fillRect(0, 0, 1000, 800);
@@ -41,8 +43,32 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
       // draws explorer
       g.setColor(Color.RED);
-      g.fillRect(explorer.getCol() * 30, explorer.getRow() * 30, 30, 30);
+      g.fillOval(explorer.getCol() * scale, explorer.getRow() * scale, scale, scale);
 
+      // draw finish
+      g.setColor(Color.CYAN);
+      g.fillRect(fLocation.getCol() * scale, fLocation.getRow() * scale, scale, scale);
+
+    } else if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
+      super.paintComponent(g);
+
+      for (Wall w : wallList) {
+        Polygon p = new Polygon();
+        for (int i = 0; i < w.getX().length; i++) {
+          p = new Polygon(w.getX(), w.getY(), w.getX().length);
+        }
+        g.setColor(Color.RED);
+        g.drawPolygon(p);
+
+        // if (count == 1 || count == 3)
+        // g.setColor(Color.DARK_GRAY);
+        // else if (count > 3)
+        // g.setColor(Color.LIGHT_GRAY);
+        // else
+        g.setColor(Color.GRAY);
+
+        g.fillPolygon(p);
+      }
     } else { // game over screen
       super.paintComponent(g);
       g.setColor(Color.BLACK);
@@ -50,7 +76,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       g.setColor(Color.WHITE);
 
       g.setFont(new Font("Arial", Font.BOLD, 36));
-      g.drawString("It only took you " + maze.getMoves() + " moves to escape...", 50, 100);
+      g.drawString("It only took you " + maze.getMoves() + " moves to escape...", 750, 400);
     }
   }
 
@@ -63,7 +89,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       while ((text = input.readLine()) != null) {
         for (int c = 0; c < text.length(); c++) {
           if (text.charAt(c) == 35) { // normal wall
-            walls[r][c] = new Wall(new Location(r, c), 30, 30);
+            walls[r][c] = new Wall(new Location(r, c), scale, scale);
           } else if (text.charAt(c) == 83) { // explorer start position
             explorer.setLocation(new Location(r, c));
           } else if (text.charAt(c) == 69) { // end of maze
@@ -87,15 +113,44 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     }
     maze = new Maze(locations, fLocation, 0);
 
-    // setWalls();
+    setWalls();
   }
 
   public void setWalls() {
-    // when you're ready for the 3D part
-    // int[] c1X={150,550,450,250};
-    // int[] c1Y={50,50,100,100};
-    // Wall ceiling1=new Wall(c1X,c1Y,4); //needs to be set as a global!
-    // parameters - x coordinates, y coordinates, # of points
+
+    int xMax = 1000;
+    int yMax = 800;
+    int iter = 50;
+    int lvl = 3;
+
+    // ceiling
+    for (int i = 0; i < lvl; i++) {
+      int[] x = { i * iter, xMax - i * iter, xMax - iter - i * iter, iter + i * iter };
+      int[] y = { i * iter, i * iter, iter + i * iter, iter + i * iter };
+      wallList.add(new Wall(x, y));
+    }
+
+    // floor
+    for (int i = 0; i < lvl; i++) {
+      int[] x = { i * iter, xMax - i * iter, xMax - iter - i * iter, iter + i * iter };
+      int[] y = { yMax - i * iter, yMax - i * iter, yMax - iter - i * iter, yMax - iter - i * iter };
+      wallList.add(new Wall(x, y));
+    }
+
+    // right wall
+    for (int i = 0; i < lvl; i++) {
+      int[] x = { xMax - i * iter, xMax - iter - i * iter, xMax - iter - i * iter, xMax - i * iter };
+      int[] y = { i * iter, i * iter + iter, yMax - iter - i * iter, yMax - i * iter };
+      wallList.add(new Wall(x, y));
+    }
+
+    // left wall
+    for (int i = 0; i < lvl; i++) {
+      int[] x = { i * iter, iter + i * iter, iter + i * iter, i * iter };
+      int[] y = { i * iter, i * iter + iter, yMax - iter - i * iter, yMax - i * iter };
+      wallList.add(new Wall(x, y));
+    }
+
   }
 
   public void keyReleased(KeyEvent e) {
