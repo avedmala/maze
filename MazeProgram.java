@@ -12,12 +12,12 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   ArrayList<Wall> wallList = new ArrayList<Wall>();
   Explorer explorer = new Explorer(new Location(0, 0), 90);
   Location fLocation = new Location(0, 0);
-  int scale = 25;
+  int scale = 25; // scale of maze blocks and explorer
 
-  int xMax = 800;
-  int yMax = 800;
-  int iter = 100;
-  int lvl = 3;
+  int xMax = 800; // horizontal res
+  int yMax = 800; // vertical res
+  int iter = 80; // size of iterations of each level
+  int lvl = 4; // number of levels
 
   public MazeProgram() {
     setBoard();
@@ -57,18 +57,18 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     } else if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
       super.paintComponent(g);
 
-      int count = 0;
-      for (Wall w : wallList) {
+      for (int i = 0; i < wallList.size(); i++) {
         Polygon p = new Polygon();
-        for (int i = 0; i < w.getX().length; i++) {
+        Wall w = wallList.get(i);
+
+        for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
-        }
+
         g.setColor(Color.RED);
         g.drawPolygon(p);
 
-        g.setColor(new Color(220 - (count * 10), 220 - (count * 10), 220 - (count * 10)));
+        g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
-        count++;
       }
     } else { // game over screen
       super.paintComponent(g);
