@@ -36,6 +36,31 @@ public class Explorer {
     location = newLocation;
   }
 
+  public int getSpace(Maze maze) {
+    int space = 0;
+    Location checkLoc = new Location(0, 0);
+    int rot = rotation % 360;
+
+    do {
+      if (rot == 0)
+        checkLoc = new Location(location.getRow() - (space + 1), location.getCol());
+      if (rot == 90 || rot == -270)
+        checkLoc = new Location(location.getRow(), location.getCol() + (space + 1));
+      if (rot == 180 || rot == -180)
+        checkLoc = new Location(location.getRow() + (space + 1), location.getCol());
+      if (rot == 270 || rot == -90)
+        checkLoc = new Location(location.getRow(), location.getCol() - (space + 1));
+
+      space++;
+    } while (!maze.contains(checkLoc));
+
+    if (space > 4) {
+      space = 4;
+    }
+
+    return space;
+  }
+
   public void move(Maze maze) {
     Location checkLoc = new Location(0, 0);
     int rot = rotation % 360;

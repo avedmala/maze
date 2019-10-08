@@ -18,7 +18,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   int yMax = 800; // vertical window res
   int iterX = xMax / 10; // size of iterations of each level for X
   int iterY = yMax / 10; // size of iterations of each level for Y
-  int lvl = 4; // number of levels
 
   public MazeProgram() {
     setBoard();
@@ -46,7 +45,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         g.drawPolygon(p);
 
         // makes each level a darker gray
-        g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
+        // g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
+        g.setColor(Color.LIGHT_GRAY);
         g.fillPolygon(p);
       }
 
@@ -121,7 +121,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     ArrayList<int[]> xList = new ArrayList<>();
     ArrayList<int[]> yList = new ArrayList<>();
 
-    for (int i = 0; i < lvl; i++) {
+    wallList.clear();
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) {
       // ceiling
       xList.add(new int[] { i * iterX, xMax - i * iterX, xMax - iterX - i * iterX, iterX + i * iterX });
       yList.add(new int[] { i * iterY, i * iterY, iterY + i * iterY, iterY + i * iterY });
@@ -153,6 +155,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         explorer.turn(-90);
       if (e.getKeyCode() == 68) // turns 90 degrees clockwise
         explorer.turn(90);
+      setWalls();
       repaint();
     }
   }
