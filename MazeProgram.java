@@ -45,8 +45,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         g.drawPolygon(p);
 
         // makes each level a darker gray
-        // g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
       }
 
@@ -131,11 +130,22 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       xList.add(new int[] { i * iterX, xMax - i * iterX, xMax - iterX - i * iterX, iterX + i * iterX });
       yList.add(new int[] { yMax - i * iterY, yMax - i * iterY, yMax - iterY - i * iterY, yMax - iterY - i * iterY });
       // right
-      xList.add(new int[] { xMax - i * iterX, xMax - iterX - i * iterX, xMax - iterX - i * iterX, xMax - i * iterX });
-      yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
+      if (explorer.isFree(maze, i, 90)) {
+        xList.add(new int[] { xMax - i * iterX, xMax - iterX - i * iterX, xMax - iterX - i * iterX, xMax - i * iterX });
+        yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
+      }
       // left
-      xList.add(new int[] { i * iterX, iterX + i * iterX, iterX + i * iterX, i * iterX });
-      yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
+      if (explorer.isFree(maze, i, -90)) {
+        xList.add(new int[] { i * iterX, iterX + i * iterX, iterX + i * iterX, i * iterX });
+        yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
+      }
+      // back wall
+      if (i == explorer.getSpace(maze) - 1) {
+        xList.add(
+            new int[] { xMax - iterX - i * iterX, iterX + i * iterX, iterX + i * iterX, xMax - iterX - i * iterX });
+        yList.add(
+            new int[] { yMax - iterY - i * iterY, yMax - iterY - i * iterY, iterY + i * iterY, iterY + i * iterY });
+      }
     }
 
     for (int i = 0; i < xList.size(); i++)

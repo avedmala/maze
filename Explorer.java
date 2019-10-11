@@ -36,10 +36,40 @@ public class Explorer {
     location = newLocation;
   }
 
+  public boolean isFree(Maze maze, int spaces, int rotOffset) {
+    Location checkLoc = new Location(0, 0);
+    int rot = (rotation % 360);
+
+    if (rot == 0)
+      checkLoc = new Location(location.getRow() - spaces, location.getCol());
+    if (rot == 90 || rot == -270)
+      checkLoc = new Location(location.getRow(), location.getCol() + spaces);
+    if (rot == 180 || rot == -180)
+      checkLoc = new Location(location.getRow() + spaces, location.getCol());
+    if (rot == 270 || rot == -90)
+      checkLoc = new Location(location.getRow(), location.getCol() - spaces);
+
+    rot += rotOffset;
+
+    if (rot == 0)
+      checkLoc = new Location(checkLoc.getRow() - 1, checkLoc.getCol());
+    if (rot == 90 || rot == -270)
+      checkLoc = new Location(checkLoc.getRow(), checkLoc.getCol() + 1);
+    if (rot == 180 || rot == -180)
+      checkLoc = new Location(checkLoc.getRow() + 1, checkLoc.getCol());
+    if (rot == 270 || rot == -90)
+      checkLoc = new Location(checkLoc.getRow(), checkLoc.getCol() - 1);
+
+    if (maze.contains(checkLoc))
+      return true;
+
+    return false;
+  }
+
   public int getSpace(Maze maze) {
     int space = 0;
     Location checkLoc = new Location(0, 0);
-    int rot = rotation % 360;
+    int rot = (rotation % 360);
 
     do {
       if (rot == 0)
