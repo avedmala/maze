@@ -23,15 +23,9 @@ public class Location {
   }
 
   public double getDistance(Location loc) {
-    int dif1 = row - loc.getRow();
-    if (dif1 < 0)
-      dif1 *= -1;
-
-    int dif2 = col - loc.getCol();
-    if (dif2 < 0)
-      dif2 *= -1;
-
-    return Math.sqrt((dif1 * dif1) + (dif2 * dif2));
+    int dRow = row - loc.getRow();
+    int dCol = col - loc.getCol();
+    return Math.sqrt((dRow * dRow) + (dCol * dCol));
   }
 
   public String toString() {

@@ -9,19 +9,20 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   Maze maze;
 
   int scale = 15; // scale of 2d maze
-  int row = 10; // size of 2d maze
-  int col = 10;
-  int mapSize = 10;
+  int row = 10; // size of the maze
+  int col = 10; // size of the maze
+  int mapSize = 7; // area shown on the 2d minimap
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> wallList = new ArrayList<Wall>();
-  Explorer explorer = new Explorer(new Location(1, 1), 0);
+  Explorer explorer = new Explorer(new Location(1, 1), 0, 3);
   Location fLocation = new Location((row * 2) - 1, (row * 2) - 1);
 
-  int xMax = 800; // horizontal window res
+  int xMax = 800; // horizontal window res - 600
   int yMax = 800; // vertical window res
-  int iterX = xMax / 10; // size of iterations of each level for X
-  int iterY = yMax / 10; // size of iterations of each level for Y
+  int iterX = xMax / 11; // size of iterations of each level for X
+  int iterY = yMax / 11; // size of iterations of each level for Y
+  // NOTE: if visibleDist goes up to 5, then the xMax must be divided by 15
 
   public MazeProgram() {
     setBoard();
@@ -31,7 +32,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     frame.setSize(xMax + 600, yMax);
     frame.setVisible(true);
     frame.addKeyListener(this);
-    // this.addMouseListener(this); //in case you need mouse clicking
+    // this.addMouseListener(this); // in case you need mouse clicking
   }
 
   public void paintComponent(Graphics g) {
@@ -113,7 +114,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
     RecursiveDivision recDiv = new RecursiveDivision(row, col);
     recDiv.makeMaze();
-    recDiv.printMaze();
+    // recDiv.printMaze();
     char[][] board = recDiv.getMaze();
     for (int r = 0; r < board.length; r++) {
       for (int c = 0; c < board[r].length; c++) {
@@ -189,6 +190,12 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         explorer.turn(-90);
       if (e.getKeyCode() == 68) // turns 90 degrees clockwise
         explorer.turn(90);
+      if (e.getKeyCode() == 32) {
+        if (explorer.getVisibleDist() == 3)
+          explorer.setVisibleDist(5);
+        else if (explorer.getVisibleDist() == 5)
+          explorer.setVisibleDist(3);
+      }
       setWalls();
       repaint();
     }

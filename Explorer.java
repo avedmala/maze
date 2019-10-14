@@ -2,10 +2,12 @@ public class Explorer {
 
   private Location location;
   private int rotation;
+  private int visibleDist;
 
-  public Explorer(Location location, int rotation) {
+  public Explorer(Location location, int rotation, int visibleDist) {
     this.location = location;
     this.rotation = rotation;
+    this.visibleDist = visibleDist;
   }
 
   public Location getLocation() {
@@ -14,6 +16,14 @@ public class Explorer {
 
   public int getRotation() {
     return rotation;
+  }
+
+  public int getVisibleDist() {
+    return visibleDist;
+  }
+
+  public void setVisibleDist(int newDist) {
+    visibleDist = newDist;
   }
 
   public void turn(int rot) {
@@ -83,7 +93,7 @@ public class Explorer {
 
       space++;
 
-      if (checkLoc.equals(maze.getFinish()) || space == 4)
+      if (checkLoc.equals(maze.getFinish()) || space == visibleDist)
         break;
 
     } while (!maze.contains(checkLoc));
