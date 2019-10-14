@@ -2,11 +2,13 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.Timer;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   private static final long serialVersionUID = 1L;
   JFrame frame;
   Maze maze;
+  Timer timer = new Timer();
 
   int scale = 15; // scale of 2d maze
   int row = 10; // size of the maze
@@ -15,7 +17,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> wallList = new ArrayList<Wall>();
-  Explorer explorer = new Explorer(new Location(1, 1), 0, 3);
+  Explorer explorer = new Explorer(new Location(1, 1), 0, 3, 100, false);
   Location fLocation = new Location((row * 2) - 1, (row * 2) - 1);
 
   int xMax = 800; // horizontal window res - 600
@@ -32,7 +34,22 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     frame.setSize(xMax + 600, yMax);
     frame.setVisible(true);
     frame.addKeyListener(this);
-    // this.addMouseListener(this); // in case you need mouse clicking
+    // this.addMouseListener(this);
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        if (explorer.getFlash())
+          explorer.useBattery(10);
+
+        if (explorer.getBattery() < 1) {
+          explorer.setVisibleDist(3);
+          explorer.toggleFlash();
+        } else if (explorer.getBattery() < 50 && explorer.getFlash())
+          explorer.setVisibleDist(4);
+
+        repaint();
+      }
+    }, 0, 1000);
   }
 
   public void paintComponent(Graphics g) {
@@ -77,6 +94,12 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         g.setColor(Color.GREEN);
         g.fillRect(fLocation.getCol() * scale + 1000, fLocation.getRow() * scale + 250, scale, scale);
       }
+
+      // draw stats
+      g.setColor(Color.BLACK);
+      g.setFont(new Font("Arial", Font.BOLD, 12));
+      g.drawString("Battery: " + explorer.getBattery() + "%", 1200, 700);
+      g.drawString("Visiblity: " + explorer.getVisibleDist() + " Spaces", 1200, 730);
 
     } else { // game over screen
       super.paintComponent(g);
@@ -190,12 +213,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         explorer.turn(-90);
       if (e.getKeyCode() == 68) // turns 90 degrees clockwise
         explorer.turn(90);
-      if (e.getKeyCode() == 32) {
-        if (explorer.getVisibleDist() == 3)
-          explorer.setVisibleDist(5);
-        else if (explorer.getVisibleDist() == 5)
-          explorer.setVisibleDist(3);
-      }
+      if (e.getKeyCode() == 32 && explorer.getBattery() > 0)
+        explorer.toggleFlash();
       setWalls();
       repaint();
     }

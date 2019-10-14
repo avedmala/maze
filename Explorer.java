@@ -3,11 +3,15 @@ public class Explorer {
   private Location location;
   private int rotation;
   private int visibleDist;
+  private int battery;
+  private boolean flashStatus;
 
-  public Explorer(Location location, int rotation, int visibleDist) {
+  public Explorer(Location location, int rotation, int visibleDist, int battery, boolean flashStatus) {
     this.location = location;
     this.rotation = rotation;
     this.visibleDist = visibleDist;
+    this.battery = battery;
+    this.flashStatus = flashStatus;
   }
 
   public Location getLocation() {
@@ -20,6 +24,33 @@ public class Explorer {
 
   public int getVisibleDist() {
     return visibleDist;
+  }
+
+  public int getBattery() {
+    return battery;
+  }
+
+  public boolean getFlash() {
+    return flashStatus;
+  }
+
+  public void toggleFlash() {
+    if (flashStatus)
+      flashStatus = false;
+    else if (battery > 0)
+      flashStatus = true;
+
+    if (visibleDist == 3 && battery > 50) {
+      visibleDist = 5;
+    } else if (visibleDist == 3 && battery > 0) {
+      visibleDist = 4;
+    } else if (visibleDist == 5 || visibleDist == 4) {
+      visibleDist = 3;
+    }
+  }
+
+  public void useBattery(int usage) {
+    battery -= usage;
   }
 
   public void setVisibleDist(int newDist) {
