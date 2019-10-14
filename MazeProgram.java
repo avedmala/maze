@@ -3,6 +3,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
+import java.io.*;
+import javax.sound.sampled.*;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   private static final long serialVersionUID = 1L;
@@ -24,7 +26,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   int yMax = 800; // vertical window res
   int iterX = xMax / 11; // size of iterations of each level for X
   int iterY = yMax / 11; // size of iterations of each level for Y
-  // NOTE: if visibleDist goes up to 5, then the xMax must be divided by 15
 
   public MazeProgram() {
     setBoard();
@@ -34,12 +35,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     frame.setSize(xMax + 600, yMax);
     frame.setVisible(true);
     frame.addKeyListener(this);
-    // this.addMouseListener(this);
     timer.schedule(new TimerTask() {
       @Override
       public void run() {
         if (explorer.getFlash())
-          explorer.useBattery(10);
+          explorer.useBattery(2);
 
         if (explorer.getBattery() < 1) {
           explorer.setVisibleDist(3);
@@ -50,6 +50,25 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         repaint();
       }
     }, 0, 1000);
+
+    try {
+      File yourFile = new File("bg_music.wav.wav");
+      AudioInputStream stream;
+      AudioFormat format;
+      DataLine.Info info;
+      Clip clip;
+
+      stream = AudioSystem.getAudioInputStream(yourFile);
+      format = stream.getFormat();
+      info = new DataLine.Info(Clip.class, format);
+      clip = (Clip) AudioSystem.getLine(info);
+      clip.open(stream);
+      clip.start();
+      clip.loop(Clip.LOOP_CONTINUOUSLY);
+      Thread.sleep(10000);
+    } catch (Exception e) {
+      System.err.println(e.toString());
+    }
   }
 
   public void paintComponent(Graphics g) {
