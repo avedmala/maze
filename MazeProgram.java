@@ -11,6 +11,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   int scale = 15; // scale of 2d maze
   int row = 10; // size of 2d maze
   int col = 10;
+  int mapSize = 10;
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> wallList = new ArrayList<Wall>();
@@ -61,7 +62,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       for (int i = 0; i < walls.length; i++) {
         for (int j = 0; j < walls[i].length; j++) {
           Wall w = walls[i][j];
-          if (w != null)
+          if (w != null && explorer.getLocation().getDistance(w.getLocation()) < mapSize)
             g.fillRect(w.getCol() * w.getWidth() + 1000, w.getRow() * w.getHeight() + 250, w.getWidth(), w.getHeight());
         }
       }
@@ -71,8 +72,10 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       g.fillOval(explorer.getCol() * scale + 1000, explorer.getRow() * scale + 250, scale, scale);
 
       // draw finish
-      g.setColor(Color.GREEN);
-      g.fillRect(fLocation.getCol() * scale + 1000, fLocation.getRow() * scale + 250, scale, scale);
+      if (explorer.getLocation().getDistance(fLocation) < mapSize) {
+        g.setColor(Color.GREEN);
+        g.fillRect(fLocation.getCol() * scale + 1000, fLocation.getRow() * scale + 250, scale, scale);
+      }
 
     } else { // game over screen
       super.paintComponent(g);

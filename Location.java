@@ -22,6 +22,18 @@ public class Location {
     return row;
   }
 
+  public double getDistance(Location loc) {
+    int dif1 = row - loc.getRow();
+    if (dif1 < 0)
+      dif1 *= -1;
+
+    int dif2 = col - loc.getCol();
+    if (dif2 < 0)
+      dif2 *= -1;
+
+    return Math.sqrt((dif1 * dif1) + (dif2 * dif2));
+  }
+
   public String toString() {
     return col + " " + row;
   }
