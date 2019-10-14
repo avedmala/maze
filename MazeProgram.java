@@ -1,18 +1,21 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   private static final long serialVersionUID = 1L;
   JFrame frame;
   Maze maze;
-  Wall[][] walls = new Wall[999][999]; // don't have to guess the size of the maze
+
+  int scale = 15; // scale of 2d maze
+  int row = 10; // size of 2d maze
+  int col = 10;
+
+  Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> wallList = new ArrayList<Wall>();
-  Explorer explorer = new Explorer(new Location(0, 0), 90);
-  Location fLocation = new Location(0, 0);
-  int scale = 15; // scale of maze blocks and explorer
+  Explorer explorer = new Explorer(new Location(1, 1), 0);
+  Location fLocation = new Location((row * 2) - 1, (row * 2) - 1);
 
   int xMax = 800; // horizontal window res
   int yMax = 800; // vertical window res
@@ -33,6 +36,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   public void paintComponent(Graphics g) {
     if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
       super.paintComponent(g);
+      g.setColor(Color.WHITE);
+      g.fillRect(0, 0, xMax + 600, yMax);
       for (int i = 0; i < wallList.size(); i++) {
         Polygon p = new Polygon();
         Wall w = wallList.get(i);
@@ -41,7 +46,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
         // draws borders of the trapezoids
-        g.setColor(Color.BLUE);
+        g.setColor(Color.CYAN);
         g.drawPolygon(p);
 
         // makes each level a darker gray
@@ -57,17 +62,17 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < walls[i].length; j++) {
           Wall w = walls[i][j];
           if (w != null)
-            g.fillRect(w.getCol() * w.getWidth() + 900, w.getRow() * w.getHeight() + 250, w.getWidth(), w.getHeight());
+            g.fillRect(w.getCol() * w.getWidth() + 1000, w.getRow() * w.getHeight() + 250, w.getWidth(), w.getHeight());
         }
       }
 
       // draws explorer
       g.setColor(Color.RED);
-      g.fillOval(explorer.getCol() * scale + 900, explorer.getRow() * scale + 250, scale, scale);
+      g.fillOval(explorer.getCol() * scale + 1000, explorer.getRow() * scale + 250, scale, scale);
 
       // draw finish
-      g.setColor(Color.CYAN);
-      g.fillRect(fLocation.getCol() * scale + 900, fLocation.getRow() * scale + 250, scale, scale);
+      g.setColor(Color.GREEN);
+      g.fillRect(fLocation.getCol() * scale + 1000, fLocation.getRow() * scale + 250, scale, scale);
 
     } else { // game over screen
       super.paintComponent(g);
@@ -81,26 +86,42 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void setBoard() {
-    File name = new File("m1.txt");
-    try {
-      BufferedReader input = new BufferedReader(new FileReader(name));
-      String text;
-      int r = 0;
-      while ((text = input.readLine()) != null) {
-        for (int c = 0; c < text.length(); c++) {
-          if (text.charAt(c) == 35) { // normal wall
-            walls[r][c] = new Wall(new Location(r, c), scale, scale);
-          } else if (text.charAt(c) == 83) { // explorer start position
-            explorer.setLocation(new Location(r, c));
-          } else if (text.charAt(c) == 69) { // end of maze
-            fLocation = new Location(r, c);
-          }
+    // File name = new File("m1.txt");
+    // try {
+    // BufferedReader input = new BufferedReader(new FileReader(name));
+    // String text;
+    // int r = 0;
+    // while ((text = input.readLine()) != null) {
+    // for (int c = 0; c < text.length(); c++) {
+    // if (text.charAt(c) == 35) { // normal wall
+    // walls[r][c] = new Wall(new Location(r, c), scale, scale);
+    // } else if (text.charAt(c) == 83) { // explorer start position
+    // explorer.setLocation(new Location(r, c));
+    // } else if (text.charAt(c) == 69) { // end of maze
+    // fLocation = new Location(r, c);
+    // }
+    // }
+    // r++;
+    // }
+    // input.close();
+    // } catch (IOException io) {
+    // System.err.println("File error");
+    // }
+
+    RecursiveDivision recDiv = new RecursiveDivision(row, col);
+    recDiv.makeMaze();
+    recDiv.printMaze();
+    char[][] board = recDiv.getMaze();
+    for (int r = 0; r < board.length; r++) {
+      for (int c = 0; c < board[r].length; c++) {
+        if (board[r][c] == 35) {
+          walls[r][c] = new Wall(new Location(r, c), scale, scale);
+        } else if (board[r][c] == 83) {
+          explorer.setLocation(new Location(r, c));
+        } else if (board[r][c] == 69) {
+          fLocation = new Location(r, c);
         }
-        r++;
       }
-      input.close();
-    } catch (IOException io) {
-      System.err.println("File error");
     }
 
     // creates maze object to store the walls in

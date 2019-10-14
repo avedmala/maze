@@ -82,11 +82,11 @@ public class Explorer {
         checkLoc = new Location(location.getRow(), location.getCol() - (space + 1));
 
       space++;
-    } while (!maze.contains(checkLoc));
 
-    if (space > 4) {
-      space = 4;
-    }
+      if (checkLoc.equals(maze.getFinish()) || space == 4)
+        break;
+
+    } while (!maze.contains(checkLoc));
 
     return space;
   }
