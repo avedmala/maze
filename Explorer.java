@@ -35,10 +35,12 @@ public class Explorer {
   }
 
   public void toggleFlash() {
-    if (flashStatus)
+    if (flashStatus) {
       flashStatus = false;
-    else if (battery > 0)
+    } else if (battery > 0) {
       flashStatus = true;
+      useBattery(2);
+    }
 
     if (visibleDist == 3 && battery > 50) {
       visibleDist = 5;
@@ -149,6 +151,9 @@ public class Explorer {
     // checks if the space explorer is trying to take is a wall
     if (!maze.contains(checkLoc)) {
       maze.addMove();
+      if (getFlash() && battery > 0)
+        useBattery(2);
+
       location = checkLoc;
     }
   }

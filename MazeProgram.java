@@ -15,12 +15,13 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   int scale = 15; // scale of 2d maze
   int row = 10; // size of the maze
   int col = 10; // size of the maze
-  int mapSize = 3; // area shown on the 2d minimap
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> wallList = new ArrayList<Wall>();
   Explorer explorer = new Explorer(new Location(1, 1), 0, 3, 100, false);
   Location fLocation = new Location((row * 2) - 1, (row * 2) - 1);
+
+  int mapSize = explorer.getVisibleDist(); // area shown on the 2d minimap
 
   int xMax = 800; // horizontal window res - 600
   int yMax = 800; // vertical window res
@@ -60,7 +61,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
       super.paintComponent(g);
       g.setColor(Color.WHITE);
-      g.fillRect(0, 0, xMax + 600, yMax);
+      g.fillRect(0, 0, xMax, yMax);
       for (int i = 0; i < wallList.size(); i++) {
         Polygon p = new Polygon();
         Wall w = wallList.get(i);
@@ -69,8 +70,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
         // draws borders of the trapezoids
-        g.setColor(Color.CYAN);
-        g.drawPolygon(p);
+        // g.setColor(Color.CYAN);
+        // g.drawPolygon(p);
 
         // makes each level a darker gray
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
@@ -78,7 +79,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       }
 
       // 2d
-      g.setColor(Color.DARK_GRAY);
+      g.setColor(Color.YELLOW);
+      g.fillRect(xMax, 0, xMax + 600, yMax);
+      g.setColor(Color.BLACK);
 
       // try {
       // final BufferedImage image = ImageIO.read(new File("img.png"));
@@ -107,6 +110,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       }
 
       // draw stats
+
       g.setColor(Color.BLACK);
       g.setFont(new Font("Arial", Font.BOLD, 12));
 
@@ -122,11 +126,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       if ((explorer.getRotation() % 360) == 0)
         g.drawString("Direction: North", 1200, 760);
       else if ((explorer.getRotation() % 360) == 90 || (explorer.getRotation() % 360) == -270)
-        g.drawString("Direction: West", 1200, 760);
+        g.drawString("Direction: East", 1200, 760);
       else if ((explorer.getRotation() % 360) == 180 || (explorer.getRotation() % 360) == -180)
         g.drawString("Direction: South", 1200, 760);
       else if ((explorer.getRotation() % 360) == 270 || (explorer.getRotation() % 360) == -90)
-        g.drawString("Direction: East", 1200, 760);
+        g.drawString("Direction: West", 1200, 760);
 
     } else { // game over screen
       super.paintComponent(g);
@@ -234,13 +238,10 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     if (!explorer.getLocation().equals(fLocation)) {
       if (e.getKeyCode() == 87) { // moves explorer in direction its facing
         explorer.move(maze);
-        if (explorer.getFlash())
-          explorer.useBattery(2);
         if (explorer.getBattery() < 1) {
           explorer.setVisibleDist(3);
           explorer.toggleFlash();
-          if (mapSize == 7)
-            mapSize = 3;
+          mapSize = explorer.getVisibleDist();
         } else if (explorer.getBattery() < 50 && explorer.getFlash())
           explorer.setVisibleDist(4);
       }
@@ -250,12 +251,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         explorer.turn(90);
       if (e.getKeyCode() == 32 && explorer.getBattery() > 0) {
         explorer.toggleFlash();
-        if (explorer.getFlash())
-          explorer.useBattery(2);
-        if (mapSize == 3)
-          mapSize = 7;
-        else
-          mapSize = 3;
+        mapSize = explorer.getVisibleDist();
       }
       setWalls();
       repaint();
