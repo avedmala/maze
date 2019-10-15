@@ -2,7 +2,6 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.Timer;
 import java.io.*;
 import javax.sound.sampled.*;
 
@@ -10,7 +9,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   private static final long serialVersionUID = 1L;
   JFrame frame;
   Maze maze;
-  Timer timer = new Timer();
 
   int scale = 15; // scale of 2d maze
   int row = 10; // size of the maze
@@ -35,24 +33,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     frame.setSize(xMax + 600, yMax);
     frame.setVisible(true);
     frame.addKeyListener(this);
-    timer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        if (explorer.getFlash())
-          explorer.useBattery(2);
-
-        if (explorer.getBattery() < 1) {
-          explorer.setVisibleDist(3);
-          explorer.toggleFlash();
-        } else if (explorer.getBattery() < 50 && explorer.getFlash())
-          explorer.setVisibleDist(4);
-
-        repaint();
-      }
-    }, 0, 1000);
 
     try {
-      File yourFile = new File("bg_music.wav.wav");
+      File yourFile = new File("bg_music.wav");
       AudioInputStream stream;
       AudioFormat format;
       DataLine.Info info;
@@ -226,14 +209,23 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
   public void keyPressed(KeyEvent e) {
     if (!explorer.getLocation().equals(fLocation)) {
-      if (e.getKeyCode() == 87) // moves explorer in direction its facing
+      if (e.getKeyCode() == 87) { // moves explorer in direction its facing
         explorer.move(maze);
+        if (explorer.getFlash())
+          explorer.useBattery(2);
+        if (explorer.getBattery() < 1) {
+          explorer.setVisibleDist(3);
+          explorer.toggleFlash();
+        } else if (explorer.getBattery() < 50 && explorer.getFlash())
+          explorer.setVisibleDist(4);
+      }
       if (e.getKeyCode() == 65) // turns 90 degrees counterclockwise
         explorer.turn(-90);
       if (e.getKeyCode() == 68) // turns 90 degrees clockwise
         explorer.turn(90);
-      if (e.getKeyCode() == 32 && explorer.getBattery() > 0)
+      if (e.getKeyCode() == 32 && explorer.getBattery() > 0) {
         explorer.toggleFlash();
+      }
       setWalls();
       repaint();
     }
