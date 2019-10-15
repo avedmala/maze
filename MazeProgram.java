@@ -1,6 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import java.util.*;
 import java.io.*;
 import javax.sound.sampled.*;
@@ -13,7 +15,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   int scale = 15; // scale of 2d maze
   int row = 10; // size of the maze
   int col = 10; // size of the maze
-  int mapSize = 7; // area shown on the 2d minimap
+  int mapSize = 3; // area shown on the 2d minimap
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> wallList = new ArrayList<Wall>();
@@ -50,7 +52,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       clip.loop(Clip.LOOP_CONTINUOUSLY);
       Thread.sleep(10000);
     } catch (Exception e) {
-      System.err.println(e.toString());
+      e.printStackTrace();
     }
   }
 
@@ -78,6 +80,13 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       // 2d
       g.setColor(Color.DARK_GRAY);
 
+      // try {
+      // final BufferedImage image = ImageIO.read(new File("img.png"));
+      // g.drawImage(image, 0, 0, null);
+      // } catch (IOException e) {
+      // e.printStackTrace();
+      // }
+
       // loops through the 2d array and draws each wall
       for (int i = 0; i < walls.length; i++) {
         for (int j = 0; j < walls[i].length; j++) {
@@ -100,8 +109,24 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       // draw stats
       g.setColor(Color.BLACK);
       g.setFont(new Font("Arial", Font.BOLD, 12));
+
+      if (explorer.getFlash())
+        g.drawString("Flashlight: On", 1200, 670);
+      else
+        g.drawString("Flashlight: Off", 1200, 670);
+
       g.drawString("Battery: " + explorer.getBattery() + "%", 1200, 700);
+
       g.drawString("Visiblity: " + explorer.getVisibleDist() + " Spaces", 1200, 730);
+
+      if ((explorer.getRotation() % 360) == 0)
+        g.drawString("Direction: North", 1200, 760);
+      else if ((explorer.getRotation() % 360) == 90 || (explorer.getRotation() % 360) == -270)
+        g.drawString("Direction: West", 1200, 760);
+      else if ((explorer.getRotation() % 360) == 180 || (explorer.getRotation() % 360) == -180)
+        g.drawString("Direction: South", 1200, 760);
+      else if ((explorer.getRotation() % 360) == 270 || (explorer.getRotation() % 360) == -90)
+        g.drawString("Direction: East", 1200, 760);
 
     } else { // game over screen
       super.paintComponent(g);
@@ -200,11 +225,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
     for (int i = 0; i < xList.size(); i++)
       wallList.add(new Wall(xList.get(i), yList.get(i)));
-
   }
 
   public void keyReleased(KeyEvent e) {
-
   }
 
   public void keyPressed(KeyEvent e) {
@@ -216,6 +239,8 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         if (explorer.getBattery() < 1) {
           explorer.setVisibleDist(3);
           explorer.toggleFlash();
+          if (mapSize == 7)
+            mapSize = 3;
         } else if (explorer.getBattery() < 50 && explorer.getFlash())
           explorer.setVisibleDist(4);
       }
@@ -225,6 +250,12 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         explorer.turn(90);
       if (e.getKeyCode() == 32 && explorer.getBattery() > 0) {
         explorer.toggleFlash();
+        if (explorer.getFlash())
+          explorer.useBattery(2);
+        if (mapSize == 3)
+          mapSize = 7;
+        else
+          mapSize = 3;
       }
       setWalls();
       repaint();
