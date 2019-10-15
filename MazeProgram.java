@@ -49,9 +49,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       info = new DataLine.Info(Clip.class, format);
       clip = (Clip) AudioSystem.getLine(info);
       clip.open(stream);
-      clip.start();
-      clip.loop(Clip.LOOP_CONTINUOUSLY);
-      Thread.sleep(10000);
+      // clip.start();
+      // clip.loop(Clip.LOOP_CONTINUOUSLY);
+      // Thread.sleep(10000);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -70,18 +70,21 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
         // draws borders of the trapezoids
-        // g.setColor(Color.CYAN);
-        // g.drawPolygon(p);
+        g.setColor(Color.CYAN);
+        g.drawPolygon(p);
 
-        // makes each level a darker gray
-        g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
+        // makes each level a darker gray and colors the finish green
+        if (explorer.getFinish(maze) != -1 && i == wallList.size() - 1)
+          g.setColor(Color.GREEN);
+        else
+          g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
       }
 
       // 2d
-      g.setColor(Color.YELLOW);
+      g.setColor(Color.DARK_GRAY);
       g.fillRect(xMax, 0, xMax + 600, yMax);
-      g.setColor(Color.BLACK);
+      g.setColor(Color.WHITE);
 
       // try {
       // final BufferedImage image = ImageIO.read(new File("img.png"));
@@ -110,8 +113,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       }
 
       // draw stats
-
-      g.setColor(Color.BLACK);
+      g.setColor(Color.WHITE);
       g.setFont(new Font("Arial", Font.BOLD, 12));
 
       if (explorer.getFlash())
@@ -144,28 +146,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void setBoard() {
-    // File name = new File("m1.txt");
-    // try {
-    // BufferedReader input = new BufferedReader(new FileReader(name));
-    // String text;
-    // int r = 0;
-    // while ((text = input.readLine()) != null) {
-    // for (int c = 0; c < text.length(); c++) {
-    // if (text.charAt(c) == 35) { // normal wall
-    // walls[r][c] = new Wall(new Location(r, c), scale, scale);
-    // } else if (text.charAt(c) == 83) { // explorer start position
-    // explorer.setLocation(new Location(r, c));
-    // } else if (text.charAt(c) == 69) { // end of maze
-    // fLocation = new Location(r, c);
-    // }
-    // }
-    // r++;
-    // }
-    // input.close();
-    // } catch (IOException io) {
-    // System.err.println("File error");
-    // }
-
     RecursiveDivision recDiv = new RecursiveDivision(row, col);
     recDiv.makeMaze();
     // recDiv.printMaze();
