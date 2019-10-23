@@ -30,6 +30,10 @@ public class Explorer {
     return battery;
   }
 
+  public void setBattery(int percent) {
+    battery = percent;
+  }
+
   public boolean getFlash() {
     return flashStatus;
   }
@@ -134,7 +138,7 @@ public class Explorer {
     return space;
   }
 
-  public int getFinish(Maze maze) {
+  public boolean seeFinish(Maze maze) {
     int space = 0;
     Location checkLoc = new Location(0, 0);
     int rot = (rotation % 360);
@@ -152,13 +156,12 @@ public class Explorer {
       space++;
 
       if (space > visibleDist || maze.contains(checkLoc)) {
-        space = -1;
-        break;
+        return false;
       }
 
     } while (!checkLoc.equals(maze.getFinish()));
 
-    return space;
+    return true;
   }
 
   public void move(Maze maze) {
