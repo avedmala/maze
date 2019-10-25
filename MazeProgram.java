@@ -1,8 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import java.util.*;
 import java.io.*;
 import javax.sound.sampled.*;
@@ -20,7 +18,13 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   boolean gameOver = false;
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
-  ArrayList<Wall> wallList = new ArrayList<Wall>();
+  ArrayList<Wall> topWallList = new ArrayList<Wall>();
+  ArrayList<Wall> bottomWallList = new ArrayList<Wall>();
+  ArrayList<Wall> rightWallList = new ArrayList<Wall>();
+  ArrayList<Wall> leftWallList = new ArrayList<Wall>();
+  ArrayList<Wall> topTriangleWallList = new ArrayList<Wall>();
+  ArrayList<Wall> bottomTriangleWallList = new ArrayList<Wall>();
+
   Explorer explorer = new Explorer(new Location(1, 1), 0, 3, 100, false);
   Location fLocation = new Location((row * 2) - 1, (row * 2) - 1);
 
@@ -66,22 +70,86 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       super.paintComponent(g);
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, xMax, yMax);
-      for (int i = 0; i < wallList.size(); i++) {
+      for (int i = 0; i < topTriangleWallList.size(); i++) {
         Polygon p = new Polygon();
-        Wall w = wallList.get(i);
+        Wall w = topTriangleWallList.get(i);
 
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        // draws borders of the trapezoids
+        g.setColor(Color.CYAN);
+        // g.drawPolygon(p);
+        g.setColor(Color.DARK_GRAY);
+        g.fillPolygon(p);
+      }
+      for (int i = 0; i < bottomTriangleWallList.size(); i++) {
+        Polygon p = new Polygon();
+        Wall w = bottomTriangleWallList.get(i);
+
+        for (int j = 0; j < w.getX().length; j++)
+          p = new Polygon(w.getX(), w.getY(), w.getX().length);
+
+        g.setColor(Color.CYAN);
+        // g.drawPolygon(p);
+        g.setColor(Color.BLUE);
+        g.fillPolygon(p);
+      }
+      for (int i = 0; i < bottomWallList.size(); i++) {
+        Polygon p = new Polygon();
+        Wall w = bottomWallList.get(i);
+
+        for (int j = 0; j < w.getX().length; j++)
+          p = new Polygon(w.getX(), w.getY(), w.getX().length);
+
+        g.setColor(Color.CYAN);
+        // g.drawPolygon(p);
+        g.setColor(Color.BLUE);
+        g.fillPolygon(p);
+      }
+      for (int i = 0; i < rightWallList.size(); i++) {
+        Polygon p = new Polygon();
+        Wall w = rightWallList.get(i);
+
+        for (int j = 0; j < w.getX().length; j++)
+          p = new Polygon(w.getX(), w.getY(), w.getX().length);
+
         g.setColor(Color.CYAN);
         g.drawPolygon(p);
 
         // makes each level a darker gray and colors the finish green
-        if (explorer.seeFinish(maze) && i == wallList.size() - 1)
-          g.setColor(Color.GREEN);
+        g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
+        g.fillPolygon(p);
+      }
+      for (int i = 0; i < leftWallList.size(); i++) {
+        Polygon p = new Polygon();
+        Wall w = leftWallList.get(i);
+
+        for (int j = 0; j < w.getX().length; j++)
+          p = new Polygon(w.getX(), w.getY(), w.getX().length);
+
+        g.setColor(Color.CYAN);
+        g.drawPolygon(p);
+
+        // makes each level a darker gray and colors the finish green
+        g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
+        g.fillPolygon(p);
+      }
+      for (int i = 0; i < topWallList.size(); i++) {
+        Polygon p = new Polygon();
+        Wall w = topWallList.get(i);
+
+        for (int j = 0; j < w.getX().length; j++)
+          p = new Polygon(w.getX(), w.getY(), w.getX().length);
+
+        g.setColor(Color.CYAN);
+        // g.drawPolygon(p);
+
+        if (explorer.seeFinish(maze) && i == topWallList.size() - 1)
+          g.setColor(Color.GREEN); // finish
+        else if (i == topWallList.size() - 1)
+          g.setColor(new Color(50, 50, 50)); // back wall
         else
-          g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
+          g.setColor(Color.DARK_GRAY); // cieling
         g.fillPolygon(p);
       }
 
@@ -89,13 +157,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       g.setColor(Color.DARK_GRAY);
       g.fillRect(xMax, 0, xMax + 600, yMax);
       g.setColor(Color.WHITE);
-
-      // try {
-      // final BufferedImage image = ImageIO.read(new File("img.png"));
-      // g.drawImage(image, 0, 0, null);
-      // } catch (IOException e) {
-      // e.printStackTrace();
-      // }
 
       // loops through the 2d array and draws each wall
       for (int i = 0; i < walls.length; i++) {
@@ -119,9 +180,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       // draw stats
       g.setColor(Color.WHITE);
       g.setFont(new Font("Arial", Font.BOLD, 12));
-
-      Button exitButton = new Button("Exit");
-      exitButton.addActionListener(new Exit());
 
       g.drawString("* Press Spacebar for Flashlight", 1200, 35);
       g.drawString("* Press Delete to Quit", 1200, 50);
@@ -196,39 +254,84 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void setWalls() {
-    ArrayList<int[]> xList = new ArrayList<>();
-    ArrayList<int[]> yList = new ArrayList<>();
+    topWallList.clear();
+    bottomWallList.clear();
+    rightWallList.clear();
+    leftWallList.clear();
 
-    wallList.clear();
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // ceiling
+      topWallList
+          .add(new Wall(new int[] { (i * iterX), xMax - (i * iterX), xMax - iterX - (i * iterX), iterX + (i * iterX) },
+              new int[] { (i * iterY), (i * iterY), iterY + (i * iterY), iterY + (i * iterY) }));
+    }
 
-    for (int i = 0; i < explorer.getSpace(maze); i++) {
-      // ceiling
-      xList.add(new int[] { i * iterX, xMax - i * iterX, xMax - iterX - i * iterX, iterX + i * iterX });
-      yList.add(new int[] { i * iterY, i * iterY, iterY + i * iterY, iterY + i * iterY });
-      // floor
-      xList.add(new int[] { i * iterX, xMax - i * iterX, xMax - iterX - i * iterX, iterX + i * iterX });
-      yList.add(new int[] { yMax - i * iterY, yMax - i * iterY, yMax - iterY - i * iterY, yMax - iterY - i * iterY });
-      // right
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // floor
+      bottomWallList.add(new Wall(
+          new int[] { (i * iterX), xMax - (i * iterX), xMax - iterX - (i * iterX), iterX + (i * iterX) }, new int[] {
+              yMax - (i * iterY), yMax - (i * iterY), yMax - iterY - (i * iterY), yMax - iterY - (i * iterY) }));
+    }
+
+    // right
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // top right triangle
+      topTriangleWallList.add(new Wall(new int[] { xMax - (i * iterX), xMax - iterX - (i * iterX), xMax - (i * iterX) },
+          new int[] { (i * iterY), (i * iterY) + iterY, (i * iterY) + iterY }));
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // right rectangle
+      rightWallList.add(new Wall(
+          new int[] { xMax - iterX - (i * iterX), xMax - (i * iterX), xMax - (i * iterX), xMax - iterX - (i * iterX) },
+          new int[] { (i * iterY) + iterY, (i * iterY) + iterY, yMax - iterY - (i * iterY),
+              yMax - iterY - (i * iterY) }));
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // bottom right triangle
+      bottomTriangleWallList
+          .add(new Wall(new int[] { xMax - iterX - (i * iterX), xMax - (i * iterX), xMax - (i * iterX) },
+              new int[] { yMax - iterY - (i * iterY), yMax - iterY - (i * iterY), yMax - (i * iterY) }));
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // right trapezoid
       if (explorer.isFree(maze, i, 90)) {
-        xList.add(new int[] { xMax - i * iterX, xMax - iterX - i * iterX, xMax - iterX - i * iterX, xMax - i * iterX });
-        yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
-      }
-      // left
-      if (explorer.isFree(maze, i, -90)) {
-        xList.add(new int[] { i * iterX, iterX + i * iterX, iterX + i * iterX, i * iterX });
-        yList.add(new int[] { i * iterY, i * iterY + iterY, yMax - iterY - i * iterY, yMax - i * iterY });
-      }
-      // back wall
-      if (i == explorer.getSpace(maze) - 1) {
-        xList.add(
-            new int[] { xMax - iterX - i * iterX, iterX + i * iterX, iterX + i * iterX, xMax - iterX - i * iterX });
-        yList.add(
-            new int[] { yMax - iterY - i * iterY, yMax - iterY - i * iterY, iterY + i * iterY, iterY + i * iterY });
+        rightWallList.add(new Wall(
+            new int[] { xMax - (i * iterX), xMax - iterX - (i * iterX), xMax - iterX - (i * iterX),
+                xMax - (i * iterX) },
+            new int[] { (i * iterY), (i * iterY) + iterY, yMax - iterY - (i * iterY), yMax - (i * iterY) }));
       }
     }
 
-    for (int i = 0; i < xList.size(); i++)
-      wallList.add(new Wall(xList.get(i), yList.get(i)));
+    // left
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // top left triangle
+      topTriangleWallList.add(new Wall(new int[] { (i * iterX), iterX + (i * iterX), (i * iterX) },
+          new int[] { (i * iterY), (i * iterY) + iterY, (i * iterY) + iterY }));
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // left rectangle
+      leftWallList
+          .add(new Wall(new int[] { (i * iterX), iterX + (i * iterX), iterX + (i * iterX), (i * iterX) }, new int[] {
+              (i * iterY) + iterY, (i * iterY) + iterY, yMax - iterY - (i * iterY), yMax - iterY - (i * iterY) }));
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // bottom left triangle
+      bottomTriangleWallList.add(new Wall(new int[] { (i * iterX), iterX + (i * iterX), (i * iterX) },
+          new int[] { yMax - iterY - (i * iterY), yMax - iterY - (i * iterY), yMax - (i * iterY) }));
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // left trapezoid
+      if (explorer.isFree(maze, i, -90)) {
+        leftWallList.add(new Wall(new int[] { (i * iterX), iterX + (i * iterX), iterX + (i * iterX), (i * iterX) },
+            new int[] { (i * iterY), (i * iterY) + iterY, yMax - iterY - (i * iterY), yMax - (i * iterY) }));
+      }
+    }
+
+    for (int i = 0; i < explorer.getSpace(maze); i++) { // back wall
+      if (i == explorer.getSpace(maze) - 1) {
+        topWallList.add(new Wall(
+            new int[] { xMax - iterX - (i * iterX), iterX + (i * iterX), iterX + (i * iterX),
+                xMax - iterX - (i * iterX) },
+            new int[] { yMax - iterY - (i * iterY), yMax - iterY - (i * iterY), iterY + (i * iterY),
+                iterY + (i * iterY) }));
+      }
+    }
   }
 
   public void keyReleased(KeyEvent e) {
@@ -258,13 +361,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
     }
     if (e.getKeyCode() == 8) {
       gameOver = true;
-    }
-  }
-
-  public class Exit implements ActionListener {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      gameOver = false;
     }
   }
 
