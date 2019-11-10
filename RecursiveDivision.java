@@ -1,5 +1,6 @@
 import java.util.*;
 
+// http://weblog.jamisbuck.org/2011/1/12/maze-generation-recursive-division-algorithm
 public class RecursiveDivision {
 
   int rows;
@@ -91,8 +92,7 @@ public class RecursiveDivision {
   private void divideHorizontal(int left, int right, int top, int bottom) {
     Random rand = new Random();
 
-    // find a random point to divide at
-    // must be even to draw a wall there
+    // find a random even point to divide at
     int divide = top + 2 + rand.nextInt((bottom - top - 1) / 2) * 2;
     if (divide % 2 == 1)
       divide++;

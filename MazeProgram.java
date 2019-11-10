@@ -77,8 +77,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        g.setColor(Color.CYAN);
-        // g.drawPolygon(p);
         g.setColor(Color.DARK_GRAY);
         g.fillPolygon(p);
       }
@@ -89,8 +87,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        g.setColor(Color.CYAN);
-        // g.drawPolygon(p);
         g.setColor(Color.BLUE);
         g.fillPolygon(p);
       }
@@ -101,8 +97,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        g.setColor(Color.CYAN);
-        // g.drawPolygon(p);
         g.setColor(Color.BLUE);
         g.fillPolygon(p);
       }
@@ -112,9 +106,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
-
-        g.setColor(Color.CYAN);
-        g.drawPolygon(p);
 
         // makes each level a darker gray and colors the finish green
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
@@ -127,9 +118,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        g.setColor(Color.CYAN);
-        g.drawPolygon(p);
-
         // makes each level a darker gray and colors the finish green
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
@@ -140,9 +128,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
-
-        g.setColor(Color.CYAN);
-        // g.drawPolygon(p);
 
         if (explorer.seeFinish(maze) && i == topWallList.size() - 1)
           g.setColor(Color.GREEN); // finish
