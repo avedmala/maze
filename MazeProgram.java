@@ -15,7 +15,6 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   int col = 10; // size of the maze
 
   int mazes = 1;
-  boolean gameOver = false;
 
   Wall[][] walls = new Wall[(row * 2) + 1][(row * 2) + 1];
   ArrayList<Wall> topWallList = new ArrayList<Wall>();
@@ -66,7 +65,7 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
   }
 
   public void paintComponent(Graphics g) {
-    if (!explorer.getLocation().equals(fLocation) && !gameOver) { // 3d stuff
+    if (!explorer.getLocation().equals(fLocation)) { // 3d stuff
       super.paintComponent(g);
       g.setColor(Color.WHITE);
       g.fillRect(0, 0, xMax, yMax);
@@ -107,7 +106,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        // makes each level a darker gray and colors the finish green
+        g.setColor(Color.CYAN);
+        g.drawPolygon(p);
+
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
       }
@@ -118,7 +119,9 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
         for (int j = 0; j < w.getX().length; j++)
           p = new Polygon(w.getX(), w.getY(), w.getX().length);
 
-        // makes each level a darker gray and colors the finish green
+        g.setColor(Color.CYAN);
+        g.drawPolygon(p);
+
         g.setColor(new Color(220 - (i * 10), 220 - (i * 10), 220 - (i * 10)));
         g.fillPolygon(p);
       }
@@ -131,9 +134,11 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
 
         if (explorer.seeFinish(maze) && i == topWallList.size() - 1)
           g.setColor(Color.GREEN); // finish
-        else if (i == topWallList.size() - 1)
+        else if (i == topWallList.size() - 1) {
+          g.setColor(Color.CYAN);
+          g.drawPolygon(p);
           g.setColor(new Color(50, 50, 50)); // back wall
-        else
+        } else
           g.setColor(Color.DARK_GRAY); // cieling
         g.fillPolygon(p);
       }
@@ -191,27 +196,20 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       else if ((explorer.getRotation() % 360) == 270 || (explorer.getRotation() % 360) == -90)
         g.drawString("Direction: West", 1200, 760);
 
-    } else if (!gameOver) { // game over screen
+    } else { // new maze
       explorer.setLocation(new Location(1, 1));
       explorer.setBattery(100);
       walls = new Wall[(row * 2) + 1][(row * 2) + 1];
       mazes++;
       setBoard();
       repaint();
-    } else if (gameOver) {
-      super.paintComponent(g);
-      g.setColor(Color.LIGHT_GRAY);
-      g.fillRect(0, 0, xMax + 600, yMax);
-      g.setColor(Color.BLACK);
-      g.setFont(new Font("Arial", Font.BOLD, 36));
-      g.drawString("You escaped from " + (mazes - 1) + " Mazes", 450, 400);
     }
   }
 
   public void setBoard() {
     RecursiveDivision recDiv = new RecursiveDivision(row, col);
     recDiv.makeMaze();
-    // recDiv.printMaze();
+    recDiv.printMaze();
     char[][] board = recDiv.getMaze();
     for (int r = 0; r < board.length; r++) {
       for (int c = 0; c < board[r].length; c++) {
@@ -345,7 +343,16 @@ public class MazeProgram extends JPanel implements KeyListener, MouseListener {
       repaint();
     }
     if (e.getKeyCode() == 8) {
-      gameOver = true;
+      frame.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+          int option = JOptionPane.showConfirmDialog(frame, "You escaped from " + (mazes - 1) + " Mazes", "Game Over",
+              JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE);
+          if (option == JOptionPane.DEFAULT_OPTION)
+            System.exit(0);
+        }
+      });
+      frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
     }
   }
 
